@@ -5,5 +5,5 @@ variable "kube_config" {
 
 variable "namespace" {
   type = string
-  default = "reddit-pipeline"
+  default = "redditpipeline"
 }
