@@ -7,7 +7,7 @@ resource "kubernetes_deployment" "redditproducer" {
     }
   }
 
-  depends_on = [ kubernetes_namespace.pipeline-namespace, kubernetes_secret.credentials ] # dependency should be shifted to kafka
+  depends_on = [ kubernetes_deployment.kafkaservice ]
 
   spec {
     replicas = 1
@@ -22,6 +22,8 @@ resource "kubernetes_deployment" "redditproducer" {
       metadata {
         labels = {
           "k8s.service" = "redditproducer"
+
+          "k8s.network/pipeline-network" = "true"
         }
       }
 

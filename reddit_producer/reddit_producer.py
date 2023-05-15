@@ -1,3 +1,4 @@
+#TODO: add the comments to kafkaproducer
 import configparser
 import praw
 import time
