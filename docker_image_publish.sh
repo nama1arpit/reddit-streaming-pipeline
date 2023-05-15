@@ -8,8 +8,3 @@ echo "=> Reddit Producer"
 cd reddit_producer
 docker build -t nama1arpit/reddit_producer:latest .
 docker push nama1arpit/reddit_producer:latest
-
-# echo "=> Kafka Service"
-# cd ../kafka
-# docker build -t nama1arpit/kafka_service:latest .
-# docker push nama1arpit/kafka_service:latest
