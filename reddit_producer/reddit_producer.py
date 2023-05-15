@@ -1,4 +1,7 @@
 #TODO: add the comments to kafkaproducer
+#TODO: add logs and error handling
+from json import dumps
+from kafka import KafkaProducer
 import configparser
 import praw
 import time
@@ -9,6 +12,10 @@ class RedditProducer:
 
         self.subreddit_name = subreddit_name
         self.reddit = self.__get_reddit_client__(cred_file)
+        self.producer = KafkaProducer(bootstrap_servers=['kafkaservice:9092'],
+                            value_serializer=lambda x:
+                            dumps(x).encode('utf-8')
+                        )
 
 
     def __get_reddit_client__(self, cred_file) -> praw.Reddit:
@@ -51,7 +58,8 @@ class RedditProducer:
                 }
                 
                 #! for debugging
-                print(comment_json)
+                self.producer.send("redditcomments", value=comment_json)
+                print("producing comments: ", comment_json)
                 time.sleep(1) # throttle due to massive amount of comments (r/all)
             except:
                 # Handle errors

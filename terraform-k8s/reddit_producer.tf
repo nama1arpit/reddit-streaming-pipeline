@@ -7,6 +7,7 @@ resource "kubernetes_deployment" "redditproducer" {
     }
   }
 
+  # should start after kafka topic creation
   depends_on = [ kubernetes_deployment.kafkaservice ]
 
   spec {

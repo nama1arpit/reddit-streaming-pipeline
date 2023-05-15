@@ -112,7 +112,7 @@ resource "kubernetes_deployment" "kafkaservice" {
           # environment variables
           env {
             name = "KAFKA_ADVERTISED_LISTENERS"
-            value = "PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://kafkaservice.${var.namespace}.svc.cluster.local:29092"
+            value = "PLAINTEXT://kafkaservice:9092,PLAINTEXT_INTERNAL://kafkaservice.${var.namespace}.svc.cluster.local:29092"
           }
 
           env {

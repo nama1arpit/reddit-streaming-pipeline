@@ -1,1 +1,2 @@
 praw==7.7.0
+kafka-python==2.0.2
