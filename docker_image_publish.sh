@@ -8,3 +8,8 @@ echo "=> Reddit Producer"
 cd reddit_producer
 docker build -t nama1arpit/reddit_producer:latest .
 docker push nama1arpit/reddit_producer:latest
+
+echo "=> Spark Stream Processor"
+cd ../spark
+docker build -t nama1arpit/spark_stream_processor:latest .
+docker push nama1arpit/spark_stream_processor:latest
