@@ -1,17 +1,29 @@
-from pyspark import SparkSession
+from pyspark.sql import SparkSession
 
-spark = SparkSession \
-    .builder \
-    .appName("APP") \
+spark = SparkSession.builder \
+    .appName("StreamProcessor") \
     .getOrCreate()
 
-df = spark \
-  .readStream \
-  .format("kafka") \
-  .option("kafka.bootstrap.servers", "kafkaservice:9092") \
-  .option("subscribe", "redditcomments") \
-  .load()
+spark.sparkContext.setLogLevel('WARN')
 
-query = df.selectExpr("CAST(value AS STRING)").writeStream.format("console").start()
+# Kafka configurations
+kafka_bootstrap_servers = "kafkaservice:9092"
+kafka_topic = "redditcomments"
+
+# Read from Kafka
+df = spark \
+    .readStream \
+    .format("kafka") \
+    .option("kafka.bootstrap.servers", kafka_bootstrap_servers) \
+    .option("subscribe", kafka_topic) \
+    .load()
+
+# Process the Kafka messages
+query = df \
+    .selectExpr("CAST(key AS STRING)", "CAST(value AS STRING)") \
+    .writeStream \
+    .outputMode("append") \
+    .format("console") \
+    .start()
 
 query.awaitTermination()

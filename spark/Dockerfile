@@ -1,4 +1,4 @@
-From apache/spark-py:v3.4.0
+FROM apache/spark-py:v3.4.0
 
 WORKDIR /src
 COPY . .
