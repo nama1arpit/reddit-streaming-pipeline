@@ -1,6 +1,26 @@
 from pyspark.sql import SparkSession
+from pyspark.sql.functions import udf, from_json, col
+from pyspark.sql.types import StringType, StructType, StructField, IntegerType, BooleanType, TimestampType
+import uuid
 
-spark = SparkSession.builder \
+def make_uuid():
+    return udf(lambda: str(uuid.uuid1()), StringType())()
+
+# Define the schema for the JSON value column
+comment_schema = StructType([
+    StructField("id", StringType(), True),
+    StructField("name", StringType(), True),
+    StructField("author", StringType(), True),
+    StructField("body", StringType(), True),
+    StructField("subreddit", StringType(), True),
+    StructField("upvotes", IntegerType(), True), #int
+    StructField("downvotes", IntegerType(), True), #int
+    StructField("over_18", BooleanType(), True), #bool
+    StructField("timestamp", StringType(), True), #timestamp
+    StructField("permalink", StringType(), True),
+])
+
+spark: SparkSession = SparkSession.builder \
     .appName("StreamProcessor") \
     .getOrCreate()
 
@@ -18,12 +38,30 @@ df = spark \
     .option("subscribe", kafka_topic) \
     .load()
 
-# Process the Kafka messages
-query = df \
-    .selectExpr("CAST(key AS STRING)", "CAST(value AS STRING)") \
+# Parse the value column as JSON
+parsed_df = df.withColumn(
+    "comment_json",
+    from_json(df["value"].cast("string"),comment_schema)
+)
+
+output_df = parsed_df.select(
+        "comment_json.id",
+        "comment_json.name",
+        "comment_json.author",
+        "comment_json.body",
+        "comment_json.subreddit",
+        "comment_json.upvotes",
+        "comment_json.downvotes",
+        "comment_json.over_18",
+        "comment_json.timestamp",
+        "comment_json.permalink",
+    ) \
+    .withColumn("uuid", make_uuid()) \
+    .withColumn("api_timestamp", col("timestamp").cast("float")) \
     .writeStream \
     .outputMode("append") \
     .format("console") \
     .start()
+#! replace the console output with cassandra
 
-query.awaitTermination()
+spark.streams.awaitAnyTermination()

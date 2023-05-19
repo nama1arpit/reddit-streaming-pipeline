@@ -1,0 +1,23 @@
+CREATE KEYSPACE IF NOT EXISTS reddit 
+    WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1};
+
+USE reddit;
+
+CREATE TABLE IF NOT EXISTS comments(
+    uuid uuid,
+    id text,
+    name text,
+    author text,
+    body text,
+    subreddit text,
+    upvotes integer,
+    downvotes integer,
+    over_18 boolean,
+    permalink text,
+    api_timestamp timestamp,
+    ingest_timestamp timestamp,
+    PRIMARY KEY(id)
+)
+WITH CLUSTERING ORDER BY (api_timestamp DESC);
+
+CREATE INDEX IF NOT EXISTS ON comments (uuid);
