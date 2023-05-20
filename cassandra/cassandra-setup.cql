@@ -14,8 +14,8 @@ CREATE TABLE IF NOT EXISTS comments(
     downvotes int,
     over_18 boolean,
     permalink text,
-    api_timestamp timestamp,
-    ingest_timestamp timestamp,
+    api_timestamp float,
+    ingest_timestamp float,
     PRIMARY KEY(id, api_timestamp)
 )
 WITH CLUSTERING ORDER BY (api_timestamp DESC);

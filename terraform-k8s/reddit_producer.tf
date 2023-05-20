@@ -8,7 +8,7 @@ resource "kubernetes_deployment" "redditproducer" {
   }
 
   # should start after kafka topic creation
-  depends_on = [ kubernetes_deployment.kafkaservice ]
+  depends_on = [ kubernetes_deployment.kafkaservice, kubernetes_deployment.cassandra ]
 
   spec {
     replicas = 1
@@ -63,7 +63,7 @@ resource "kubernetes_service" "redditproducer" {
   }
 
 
-  depends_on = [kubernetes_deployment.redditproducer]
+  depends_on = [ kubernetes_deployment.redditproducer ]
 
   spec {
     selector = {

@@ -1,9 +1,8 @@
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import udf, from_json, col
+from pyspark.sql.functions import udf, from_json, col, unix_timestamp
 from pyspark.sql.types import StringType, StructType, StructField, IntegerType, BooleanType, FloatType
-from pyspark.sql.streaming import Trigger
-
 import uuid
+
 
 def make_uuid():
     return udf(lambda: str(uuid.uuid1()), StringType())()
@@ -24,6 +23,9 @@ comment_schema = StructType([
 
 spark: SparkSession = SparkSession.builder \
     .appName("StreamProcessor") \
+    .config('spark.cassandra.connection.host', 'cassandra') \
+    .config('spark.cassandra.connection.port', '9042') \
+    .config('spark.cassandra.output.consistency.level','ONE') \
     .getOrCreate()
 
 spark.sparkContext.setLogLevel('WARN')
@@ -60,23 +62,13 @@ output_df = parsed_df.select(
     ) \
     .withColumn("uuid", make_uuid()) \
     .withColumn("api_timestamp", col("timestamp").cast("float")) \
-    # .writeStream \
-    # .outputMode("append") \
-    # .format("console") \
-    # .start()
-#! replace the console output with cassandra
+    .withColumn("ingest_timestamp", unix_timestamp().cast(FloatType())) \
+    .drop("timestamp")
 
 output_df.writeStream \
-    .trigger(Trigger.ProcessingTime("1 second")) \
-    .foreachBatch(
-        lambda batchDF, batchID:
-        batchDF.write \
-            .format("org.apache.spark.sql.cassandra") \
-            .mode("append") \
-            .options(table="comments", keyspace="reddit") \
-            .save()
-    ) \
-    .outputMode("update") \
+    .option("checkpointLocation", "/tmp/check_point/") \
+    .format("org.apache.spark.sql.cassandra") \
+    .options(table="comments", keyspace="reddit") \
     .start()
 
 spark.streams.awaitAnyTermination()
