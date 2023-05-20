@@ -1,6 +1,8 @@
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import udf, from_json, col
-from pyspark.sql.types import StringType, StructType, StructField, IntegerType, BooleanType, TimestampType
+from pyspark.sql.types import StringType, StructType, StructField, IntegerType, BooleanType, FloatType
+from pyspark.sql.streaming import Trigger
+
 import uuid
 
 def make_uuid():
@@ -16,7 +18,7 @@ comment_schema = StructType([
     StructField("upvotes", IntegerType(), True), #int
     StructField("downvotes", IntegerType(), True), #int
     StructField("over_18", BooleanType(), True), #bool
-    StructField("timestamp", StringType(), True), #timestamp
+    StructField("timestamp", FloatType(), True), #timestamp
     StructField("permalink", StringType(), True),
 ])
 
@@ -58,10 +60,23 @@ output_df = parsed_df.select(
     ) \
     .withColumn("uuid", make_uuid()) \
     .withColumn("api_timestamp", col("timestamp").cast("float")) \
-    .writeStream \
-    .outputMode("append") \
-    .format("console") \
-    .start()
+    # .writeStream \
+    # .outputMode("append") \
+    # .format("console") \
+    # .start()
 #! replace the console output with cassandra
+
+output_df.writeStream \
+    .trigger(Trigger.ProcessingTime("1 second")) \
+    .foreachBatch(
+        lambda batchDF, batchID:
+        batchDF.write \
+            .format("org.apache.spark.sql.cassandra") \
+            .mode("append") \
+            .options(table="comments", keyspace="reddit") \
+            .save()
+    ) \
+    .outputMode("update") \
+    .start()
 
 spark.streams.awaitAnyTermination()

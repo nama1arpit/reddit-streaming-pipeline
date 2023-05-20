@@ -1,3 +1,3 @@
-FROM cassandra:3.11.3
+FROM cassandra:latest
 
-COPY ./scripts/cassandra-setup.cql /cassandra-setup.cql
+COPY ./cassandra-setup.cql /cassandra-setup.cql

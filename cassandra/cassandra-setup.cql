@@ -10,13 +10,13 @@ CREATE TABLE IF NOT EXISTS comments(
     author text,
     body text,
     subreddit text,
-    upvotes integer,
-    downvotes integer,
+    upvotes int,
+    downvotes int,
     over_18 boolean,
     permalink text,
     api_timestamp timestamp,
     ingest_timestamp timestamp,
-    PRIMARY KEY(id)
+    PRIMARY KEY(id, api_timestamp)
 )
 WITH CLUSTERING ORDER BY (api_timestamp DESC);
 

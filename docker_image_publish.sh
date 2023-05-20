@@ -13,3 +13,8 @@ echo "=> Spark Stream Processor"
 cd ../spark
 docker build -t nama1arpit/spark_stream_processor:latest .
 docker push nama1arpit/spark_stream_processor:latest
+
+echo "=> Cassandra"
+cd ../cassandra
+docker build -t nama1arpit/cassandra:latest .
+docker push nama1arpit/cassandra:latest

@@ -7,7 +7,7 @@ resource "kubernetes_deployment" "spark" {
     }
   }
 
-  depends_on = [ kubernetes_service.redditproducer ]
+  depends_on = [ kubernetes_service.redditproducer, kubernetes_service.cassandra ]
 
   spec {
     replicas = 1
