@@ -28,7 +28,7 @@ spark: SparkSession = SparkSession.builder \
     .config('spark.cassandra.output.consistency.level','ONE') \
     .getOrCreate()
 
-spark.sparkContext.setLogLevel('WARN')
+# spark.sparkContext.setLogLevel('ERROR')
 
 # Kafka configurations
 kafka_bootstrap_servers = "kafkaservice:9092"
@@ -65,8 +65,11 @@ output_df = parsed_df.select(
     .withColumn("ingest_timestamp", unix_timestamp().cast(FloatType())) \
     .drop("timestamp")
 
+# https://stackoverflow.com/questions/64922560/pyspark-and-kafka-set-are-gone-some-data-may-have-been-missed
+# adding failOnDataLoss as the checkpoint change with kafka brokers going down
 output_df.writeStream \
     .option("checkpointLocation", "/tmp/check_point/") \
+    .option("failOnDataLoss", "false") \
     .format("org.apache.spark.sql.cassandra") \
     .options(table="comments", keyspace="reddit") \
     .start()

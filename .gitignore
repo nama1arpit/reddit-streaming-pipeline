@@ -1,2 +1,5 @@
 # secrets
 secrets/
+
+# debugging log files
+*.log
