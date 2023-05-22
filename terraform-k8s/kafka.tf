@@ -278,3 +278,33 @@ resource "kubernetes_service" "kafkaservice" {
     cluster_ip = "None"
   }
 }
+
+# Nodeport service for exposing Kafdrop UI
+resource "kubernetes_service" "kafdrop" {
+  metadata {
+    name = "kafdrop"
+    namespace = "${var.namespace}"
+    labels = {
+      "k8s.service" = "kafka"
+    }
+  }
+
+  depends_on = [ kubernetes_deployment.kafkaservice ]
+
+  spec {
+    # kafdrop
+    port {
+      name = "9000"
+      port = 9000
+      target_port = 9000
+      node_port = 30003
+      protocol = "TCP"
+    }
+    session_affinity = "ClientIP"
+    type = "NodePort"
+
+    selector = {
+      "k8s.service" = "kafka"
+    }
+  }
+}

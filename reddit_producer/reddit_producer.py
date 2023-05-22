@@ -60,7 +60,7 @@ class RedditProducer:
                 #! for debugging
                 self.producer.send("redditcomments", value=comment_json)
                 print("producing comments: ", comment_json)
-                time.sleep(1) # throttle due to massive amount of comments (r/all)
+                time.sleep(0.1) # throttle due to massive amount of comments (r/all)
             except:
                 # Handle errors
                 pass
