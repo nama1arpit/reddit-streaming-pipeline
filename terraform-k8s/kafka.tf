@@ -297,7 +297,7 @@ resource "kubernetes_service" "kafdrop" {
       name = "9000"
       port = 9000
       target_port = 9000
-      node_port = 30003
+      node_port = 30000
       protocol = "TCP"
     }
     session_affinity = "ClientIP"

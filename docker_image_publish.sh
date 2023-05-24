@@ -18,3 +18,8 @@ echo "=> Cassandra"
 cd ../cassandra
 docker build -t nama1arpit/cassandra:latest .
 docker push nama1arpit/cassandra:latest
+
+echo "=> Grafana"
+cd ../grafana
+docker build -t nama1arpit/grafana:latest .
+docker push nama1arpit/grafana:latest
