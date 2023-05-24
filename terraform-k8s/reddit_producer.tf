@@ -32,6 +32,7 @@ resource "kubernetes_deployment" "redditproducer" {
         container {
           name = "redditproducer"
           image = "nama1arpit/reddit_producer:latest"
+          image_pull_policy = "Always"
 
           volume_mount {
             name = "credentials"

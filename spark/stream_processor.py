@@ -1,8 +1,16 @@
+from nltk.sentiment import SentimentIntensityAnalyzer
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import udf, from_json, col, unix_timestamp
 from pyspark.sql.types import StringType, StructType, StructField, IntegerType, BooleanType, FloatType
 import uuid
 
+
+def analyze_sentiment(text):
+    analyzer = SentimentIntensityAnalyzer()
+    sentiment = analyzer.polarity_scores(text)
+    return sentiment['compound']
+
+sentiment_udf = udf(analyze_sentiment, FloatType())
 
 def make_uuid():
     return udf(lambda: str(uuid.uuid1()), StringType())()
@@ -64,6 +72,11 @@ output_df = parsed_df.select(
     .withColumn("api_timestamp", col("timestamp").cast("float")) \
     .withColumn("ingest_timestamp", unix_timestamp().cast(FloatType())) \
     .drop("timestamp")
+
+# adding sentiment score
+output_df = output_df.withColumn(
+    'sentiment_score', sentiment_udf(output_df['body'])
+)
 
 # https://stackoverflow.com/questions/64922560/pyspark-and-kafka-set-are-gone-some-data-may-have-been-missed
 # adding failOnDataLoss as the checkpoint change with kafka brokers going down

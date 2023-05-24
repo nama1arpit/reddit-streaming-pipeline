@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS comments(
     permalink text,
     api_timestamp float,
     ingest_timestamp float,
+    sentiment_score float,
     PRIMARY KEY(id, api_timestamp)
 )
 WITH CLUSTERING ORDER BY (api_timestamp DESC);
