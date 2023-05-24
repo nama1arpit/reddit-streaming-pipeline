@@ -1,6 +1,6 @@
 from nltk.sentiment import SentimentIntensityAnalyzer
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import udf, from_json, col, unix_timestamp
+from pyspark.sql.functions import udf, from_json, col, unix_timestamp, from_unixtime
 from pyspark.sql.types import StringType, StructType, StructField, IntegerType, BooleanType, FloatType
 import uuid
 
@@ -69,8 +69,8 @@ output_df = parsed_df.select(
         "comment_json.permalink",
     ) \
     .withColumn("uuid", make_uuid()) \
-    .withColumn("api_timestamp", col("timestamp").cast("float")) \
-    .withColumn("ingest_timestamp", unix_timestamp().cast(FloatType())) \
+    .withColumn("api_timestamp", from_unixtime(col("timestamp").cast(FloatType()))) \
+    .withColumn("ingest_timestamp", from_unixtime(unix_timestamp().cast(FloatType()))) \
     .drop("timestamp")
 
 # adding sentiment score

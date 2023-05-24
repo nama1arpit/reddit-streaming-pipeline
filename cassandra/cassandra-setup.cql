@@ -14,8 +14,8 @@ CREATE TABLE IF NOT EXISTS comments(
     downvotes int,
     over_18 boolean,
     permalink text,
-    api_timestamp float,
-    ingest_timestamp float,
+    api_timestamp timestamp,
+    ingest_timestamp timestamp,
     sentiment_score float,
     PRIMARY KEY(id, api_timestamp)
 )
