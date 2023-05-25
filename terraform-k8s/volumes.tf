@@ -53,7 +53,7 @@ resource "kubernetes_persistent_volume" "cassandravolume" {
   ]
   spec {
     capacity = {
-      storage = "1Gi"
+      storage = "10Gi"
     }
     access_modes = ["ReadWriteMany"]
     storage_class_name = "hostpath"

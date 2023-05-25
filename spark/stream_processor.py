@@ -88,7 +88,7 @@ output_df.writeStream \
     .start()
 
 # adding moving averages in another df
-summary_df = output_df.withWatermark("ingest_timestamp", "5 minutes").groupBy("subreddit") \
+summary_df = output_df.withWatermark("ingest_timestamp", "1 minute").groupBy("subreddit") \
     .agg(avg("sentiment_score").alias("sentiment_score_avg")) \
     .withColumn("uuid", make_uuid()) \
     .withColumn("ingest_timestamp", current_timestamp())
