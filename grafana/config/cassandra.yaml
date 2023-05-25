@@ -18,7 +18,7 @@ datasources:
     # <int> org id. will default to orgId 1 if not specified
     orgId: 1
     # <string> custom UID which can be used to reference this datasource in other parts of the configuration, if not specified will be generated automatically
-    # uid: zkkgdadVz
+    uid: Yc87Z6OJ4wsv
     # <string> url
     url: cassandra:9042
     # <string> database user, if used

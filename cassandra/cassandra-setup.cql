@@ -17,8 +17,18 @@ CREATE TABLE IF NOT EXISTS comments(
     api_timestamp timestamp,
     ingest_timestamp timestamp,
     sentiment_score float,
-    PRIMARY KEY(id, api_timestamp)
+    PRIMARY KEY((subreddit), api_timestamp)
 )
 WITH CLUSTERING ORDER BY (api_timestamp DESC);
 
 CREATE INDEX IF NOT EXISTS ON comments (uuid);
+
+CREATE TABLE IF NOT EXISTS subreddit_sentiment_avg(
+    uuid uuid,
+    subreddit text,
+    sentiment_score_avg double,
+    ingest_timestamp timestamp,
+    PRIMARY KEY((subreddit),ingest_timestamp))
+WITH CLUSTERING ORDER BY (ingest_timestamp DESC);
+
+CREATE INDEX IF NOT EXISTS ON subreddit_sentiment_avg (uuid);

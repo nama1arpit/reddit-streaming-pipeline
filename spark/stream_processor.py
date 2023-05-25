@@ -1,6 +1,6 @@
 from nltk.sentiment import SentimentIntensityAnalyzer
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import udf, from_json, col, unix_timestamp, from_unixtime
+from pyspark.sql.functions import udf, from_json, col, from_unixtime, avg, current_timestamp
 from pyspark.sql.types import StringType, StructType, StructField, IntegerType, BooleanType, FloatType
 import uuid
 
@@ -70,7 +70,7 @@ output_df = parsed_df.select(
     ) \
     .withColumn("uuid", make_uuid()) \
     .withColumn("api_timestamp", from_unixtime(col("timestamp").cast(FloatType()))) \
-    .withColumn("ingest_timestamp", from_unixtime(unix_timestamp().cast(FloatType()))) \
+    .withColumn("ingest_timestamp", current_timestamp()) \
     .drop("timestamp")
 
 # adding sentiment score
@@ -86,5 +86,19 @@ output_df.writeStream \
     .format("org.apache.spark.sql.cassandra") \
     .options(table="comments", keyspace="reddit") \
     .start()
+
+# adding moving averages in another df
+summary_df = output_df.withWatermark("ingest_timestamp", "5 minutes").groupBy("subreddit") \
+    .agg(avg("sentiment_score").alias("sentiment_score_avg")) \
+    .withColumn("uuid", make_uuid()) \
+    .withColumn("ingest_timestamp", current_timestamp())
+
+summary_df.writeStream.trigger(processingTime="5 seconds") \
+    .foreachBatch(
+        lambda batchDF, batchID: batchDF.write.format("org.apache.spark.sql.cassandra") \
+            .option("checkpointLocation", "/tmp/check_point/") \
+            .options(table="subreddit_sentiment_avg", keyspace="reddit") \
+            .mode("append").save()
+    ).outputMode("update").start()
 
 spark.streams.awaitAnyTermination()
