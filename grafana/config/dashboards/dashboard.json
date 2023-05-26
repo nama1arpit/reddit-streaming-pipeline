@@ -209,7 +209,7 @@
           "queryType": "query",
           "rawQuery": true,
           "refId": "A",
-          "target": "select subreddit, CAST(sentiment_score_avg AS double), ingest_timestamp from reddit.subreddit_sentiment_avg where subreddit IN ('india', 'usa', 'unitedkingdom', 'australia', 'russia', 'China', 'Africa') and ingest_timestamp>$__timeFrom and ingest_timestamp<$__timeTo;"
+          "target": "select subreddit, CAST(sentiment_score_avg AS double), ingest_timestamp from reddit.subreddit_sentiment_avg where subreddit IN ('india', 'usa', 'unitedkingdom', 'australia', 'russia', 'China') and ingest_timestamp>$__timeFrom and ingest_timestamp<$__timeTo;"
         }
       ],
       "title": "Countries",

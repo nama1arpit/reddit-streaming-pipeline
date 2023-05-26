@@ -7,7 +7,7 @@ import threading
 
 threads = []
 top_subreddit_list = ['AskReddit', 'funny', 'gaming', 'aww', 'worldnews']
-countries_subreddit_list = ['india', 'usa', 'unitedkingdom', 'australia', 'russia', 'China', 'Africa']
+countries_subreddit_list = ['india', 'usa', 'unitedkingdom', 'australia', 'russia', 'China']
 
 
 class RedditProducer:
