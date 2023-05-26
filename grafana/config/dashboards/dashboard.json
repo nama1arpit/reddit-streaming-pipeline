@@ -34,8 +34,109 @@
           },
           "custom": {
             "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
+            "axisColorMode": "series",
+            "axisLabel": "Sentiment Score",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 1.5,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 12,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "columnId": "subreddit",
+          "columnTime": "api_timestamp",
+          "columnValue": "upvotes",
+          "datasource": {
+            "type": "hadesarchitect-cassandra-datasource",
+            "uid": "Yc87Z6OJ4wsv"
+          },
+          "datasourceId": 1,
+          "keyspace": "reddit",
+          "queryType": "query",
+          "rawQuery": true,
+          "refId": "A",
+          "table": "subreddit_sentiment_avg",
+          "target": "select subreddit, CAST(sentiment_score_avg AS double), ingest_timestamp from reddit.subreddit_sentiment_avg where subreddit IN ('AskReddit', 'funny', 'gaming', 'aww', 'worldnews') and ingest_timestamp>$__timeFrom and ingest_timestamp<$__timeTo ALLOW FILTERING;"
+        }
+      ],
+      "title": "Top subreddits",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "hadesarchitect-cassandra-datasource",
+        "uid": "Yc87Z6OJ4wsv"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "series",
+            "axisLabel": "Sentiment Score",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
@@ -80,12 +181,12 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
-        "w": 12,
+        "h": 10,
+        "w": 24,
         "x": 0,
-        "y": 0
+        "y": 12
       },
-      "id": 1,
+      "id": 2,
       "options": {
         "legend": {
           "calcs": [],
@@ -100,23 +201,18 @@
       },
       "targets": [
         {
-          "columnId": "subreddit",
-          "columnTime": "api_timestamp",
-          "columnValue": "upvotes",
           "datasource": {
             "type": "hadesarchitect-cassandra-datasource",
             "uid": "Yc87Z6OJ4wsv"
           },
           "datasourceId": 1,
-          "keyspace": "reddit",
           "queryType": "query",
           "rawQuery": true,
           "refId": "A",
-          "table": "subreddit_sentiment_avg",
-          "target": "select subreddit, CAST(sentiment_score_avg AS double), ingest_timestamp from reddit.subreddit_sentiment_avg where subreddit IN ('AskReddit', 'biology', 'wallstreetbets') and ingest_timestamp>$__timeFrom and ingest_timestamp<$__timeTo ALLOW FILTERING;"
+          "target": "select subreddit, CAST(sentiment_score_avg AS double), ingest_timestamp from reddit.subreddit_sentiment_avg where subreddit IN ('india', 'usa', 'unitedkingdom', 'australia', 'russia', 'China', 'Africa') and ingest_timestamp>$__timeFrom and ingest_timestamp<$__timeTo;"
         }
       ],
-      "title": "Panel Title",
+      "title": "Countries",
       "type": "timeseries"
     }
   ],
@@ -128,7 +224,7 @@
     "list": []
   },
   "time": {
-    "from": "now-1h",
+    "from": "now-6h",
     "to": "now"
   },
   "timepicker": {},
