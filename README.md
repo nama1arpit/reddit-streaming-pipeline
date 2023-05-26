@@ -6,11 +6,13 @@ The Reddit Sentiment Analysis Data Pipeline is designed to collect comments from
 - [Project Overview](#project-overview)
 - [Table of Contents](#table-of-contents)
 - [Architecture](#architecture)
+- [Installation and Setup](#installation-and-setup)
+- [Improvements](#improvements)
+- [Acknowledgements](#acknowledgement)
 
 # Architecture
 
-<!Fill in the link>
-![reddit_sentiment_analysis_pipeline_architecture](link)
+![reddit_sentiment_analysis_pipeline_architecture](https://raw.githubusercontent.com/nama1arpit/reddit-streaming-pipeline/main/images/Reddit%20Sentiment%20Analysis%20Data%20Pipeline.drawio.png)
 
 All applications in the above architecture are containerized into **Docker containers**, which are orchestrated by **Kubernetes** - and its infrastructure is managed by **Terraform**. The docker images for each application are available publically in the [Docker Hub registry](https://hub.docker.com/repositories/nama1arpit). Further details about each layer is provided below:
 
@@ -26,10 +28,9 @@ All applications in the above architecture are containerized into **Docker conta
 
     - `Top subreddits`: Showcase the real-time sentiment scores of a few top subreddits of all time.
     <!Fill in the link>
-    [!top_subreddit_panel](link)
+    ![top_subreddit_panel](https://raw.githubusercontent.com/nama1arpit/reddit-streaming-pipeline/main/images/top_subreddit_panel.png)
     - `Countries`: Showcase the real-time sentiment scores of subreddits based on a few countries.
-    <!Fill in the link>
-    [!countries_panel](link)
+    ![countries_panel](https://raw.githubusercontent.com/nama1arpit/reddit-streaming-pipeline/main/images/countries_panel.png)
 
 # Installation and Setup
 ## System Requirements
@@ -84,7 +85,7 @@ http://192.168.49.2:30001
 The grafana dashboard can be accessed with the above link. In case, there are authorization errors at the start, login into grafana UI with `username: admin, password: admin`
 
 <!Fill in the link>
-![grafana_dashboard](link)
+![grafana_dashboard](https://raw.githubusercontent.com/nama1arpit/reddit-streaming-pipeline/main/images/grafana_dashboard.png)
 
 # Improvements
 
