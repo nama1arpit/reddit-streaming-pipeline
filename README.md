@@ -82,7 +82,6 @@ http://192.168.49.2:30001
 ```
 The grafana dashboard can be accessed with the above link. In case, there are authorization errors at the start, login into grafana UI with `username: admin, password: admin`
 
-<!Fill in the link>
 ![grafana_dashboard](https://raw.githubusercontent.com/nama1arpit/reddit-streaming-pipeline/main/images/grafana_dashboard.png)
 
 Similarly the exposed URL for Kafdrop UI can be retrieved and accessed as follows:
@@ -90,6 +89,8 @@ Similarly the exposed URL for Kafdrop UI can be retrieved and accessed as follow
 $ minikube service kafdrop -n redditpipeline --url
 http://192.168.49.2:30000
 ```
+
+![kafdrop_ui](https://raw.githubusercontent.com/nama1arpit/reddit-streaming-pipeline/main/images/kafdrop_ui.png)
 
 # Improvements
 
