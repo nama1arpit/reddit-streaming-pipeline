@@ -85,6 +85,12 @@ The grafana dashboard can be accessed with the above link. In case, there are au
 <!Fill in the link>
 ![grafana_dashboard](https://raw.githubusercontent.com/nama1arpit/reddit-streaming-pipeline/main/images/grafana_dashboard.png)
 
+Similarly the exposed URL for Kafdrop UI can be retrieved and accessed as follows:
+```bash
+$ minikube service kafdrop -n redditpipeline --url
+http://192.168.49.2:30000
+```
+
 # Improvements
 
 # Acknowledgements
