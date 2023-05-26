@@ -8,7 +8,7 @@ The Reddit Sentiment Analysis Data Pipeline is designed to collect comments from
 - [Architecture](#architecture)
 - [Installation and Setup](#installation-and-setup)
 - [Improvements](#improvements)
-- [Acknowledgements](#acknowledgement)
+- [Acknowledgements](#acknowledgements)
 
 # Architecture
 
@@ -16,13 +16,13 @@ The Reddit Sentiment Analysis Data Pipeline is designed to collect comments from
 
 All applications in the above architecture are containerized into **Docker containers**, which are orchestrated by **Kubernetes** - and its infrastructure is managed by **Terraform**. The docker images for each application are available publically in the [Docker Hub registry](https://hub.docker.com/repositories/nama1arpit). Further details about each layer is provided below:
 
-1. **Data Ingestion :** A containerized Python application called *reddit_producer* connects to Reddit API using credentials provided in the `secrets/credentials.cfg` file. It takes the received messages (reddit comments) and converts them into a JSON format. These transformed messages are then sent and stored in a Kafka broker.
+1. **Data Ingestion :** A containerized Python application called *reddit_producer* connects to Reddit API using credentials provided in the `secrets/credentials.cfg` file. It takes the received messages (reddit comments) and converts them into a JSON format. These transformed messages are then sent and stored in a Kafka broker. [PRAW](https://praw.readthedocs.io/en/stable/) python library is used for interacting with Reddit API.
 
 2. **Message Broker :** The Kafka broker (*kafkaservice* pod), recieves messages from the *reddit_producer*. The Kafka broker is accompanied by the Kafdrop applicatino, which acts as Kafka mointoring tool through UI. When Kafka starts, another container named `kafkainit` creates the topic `redditcomments`. The *zookeeper* pod is launched before Kafka for managing Kafka metadata.
 
 3. **Stream Processer :** A Spark deployment in the Kubernetes cluster is started for consuming and processing the data from the Kafka topic `redditcomments`. The PySpark script `spark/stream_processor.py` consumes and aggregates the data to put it in the data sink i.e. Cassandra tables.
 
-4. **Processed Data Storage :** A Cassandra cluster is used to store and serve the processed data from the above spark job. When Cassandra starts, another container named `cassandrainit` creates the keyspace `reddit` and tables `comments` & `subreddit_sentiment_avg`. Raw comments data is written in `reddit.comments` table and the aggregated data is written in `reddit.subreddit_sentiment_avg` table.
+4. **Processed Data Storage :** A Cassandra cluster is used to store and serve the processed data from the above spark job. When Cassandra starts, another container named `cassandrainit` creates the keyspace `reddit` and tables `comments` & `subreddit_sentiment_avg`. Raw comments data is written in `reddit.comments` table and the aggregated data is written in `reddit.subreddit_sentiment_avg` table. The [NLTK](https://www.nltk.org/) python library is used to prepare a sentiment score for each comment and the score is aggregated for each subreddit in the last minute.
 
 5. **Data Visualisation :** Grafana establishes a connection with the Cassandra database. It queries the aggregated data from Cassandra and presents it visually to users through a dashboard. The dashboard shows the following panels for analysis:
 
@@ -57,9 +57,7 @@ user_agent=<dev_application_name>
 client_id=<dev_application_client_id>
 client_secret=<dev_application_client_secret>
 ```
-You may have to create a reddit developer application at https://www.reddit.com/prefs/apps/ to get the above credentials.
-
-Once the credential file is ready, start the minikube cluster and apply the terraform configuration as follows:
+You may have to create a reddit developer application at https://www.reddit.com/prefs/apps/ to get the above credentials. Once the credential file is ready, start the minikube cluster and apply the terraform configuration as follows:
 
 ```bash
 # Remove the current cluster, start a new one along with the dashboard
@@ -89,6 +87,7 @@ The grafana dashboard can be accessed with the above link. In case, there are au
 
 # Improvements
 
-# Acknowledgement
-1. https://github.com/RSKriegs/finnhub-streaming-data-pipeline
-2. 
+# Acknowledgements
+1. [Finnhub Streaming Data Pipeline Project](https://github.com/RSKriegs/finnhub-streaming-data-pipeline)
+2. Docker Images - [Cassandra](https://hub.docker.com/_/cassandra), [Grafana](https://hub.docker.com/r/grafana/grafana), [Apache Spark-Py](https://hub.docker.com/r/apache/spark-py), [Confluentinc Zookeeper](https://hub.docker.com/r/confluentinc/cp-zookeeper), [Confluentinc Kafka](https://hub.docker.com/r/confluentinc/cp-kafka/), [Kafdrop](https://hub.docker.com/r/obsidiandynamics/kafdrop)
+3. Libraries - [Kafka-Python](https://kafka-python.readthedocs.io/en/master/), [NLTK](https://www.nltk.org/), [PRAW](https://praw.readthedocs.io/en/stable/)
