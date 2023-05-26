@@ -1,16 +1,20 @@
-#TODO: add the comments to kafkaproducer
 #TODO: add logs and error handling
 from json import dumps
 from kafka import KafkaProducer
 import configparser
 import praw
-import time
+import threading
+
+threads = []
+top_subreddit_list = ['AskReddit', 'funny', 'gaming', 'aww', 'worldnews']
+countries_subreddit_list = ['india', 'usa', 'unitedkingdom', 'australia', 'russia', 'China', 'Africa']
+
 
 class RedditProducer:
 
-    def __init__(self, subreddit_name: str, cred_file: str="secrets/credentials.cfg"):
+    def __init__(self, subreddit_list: list[str], cred_file: str="secrets/credentials.cfg"):
 
-        self.subreddit_name = subreddit_name
+        self.subreddit_list = subreddit_list
         self.reddit = self.__get_reddit_client__(cred_file)
         self.producer = KafkaProducer(bootstrap_servers=['kafkaservice:9092'],
                             value_serializer=lambda x:
@@ -39,8 +43,8 @@ class RedditProducer:
         )
 
 
-    def start_stream(self) -> None:
-        subreddit = self.reddit.subreddit(self.subreddit_name)
+    def start_stream(self, subreddit_name) -> None:
+        subreddit = self.reddit.subreddit(subreddit_name)
         comment: praw.models.Comment
         for comment in subreddit.stream.comments(skip_existing=True):
             try:
@@ -57,14 +61,21 @@ class RedditProducer:
                     "permalink": comment.permalink,
                 }
                 
-                #! for debugging
                 self.producer.send("redditcomments", value=comment_json)
-                print("producing comments: ", comment_json)
-                time.sleep(0.1) # throttle due to massive amount of comments (r/all)
-            except:
-                # Handle errors
-                pass
+                print(f"subreddit: {subreddit_name}, comment: {comment_json}")
+            except Exception as e:
+                print("An error occurred:", str(e))
+    
+    def start_streaming_threads(self):
+        for subreddit_name in self.subreddit_list:
+            thread = threading.Thread(target=self.start_stream, args=(subreddit_name,))
+            thread.start()
+            threads.append(thread)
+        
+        for thread in threads:
+            thread.join()
+
 
 if __name__ == "__main__":
-    reddit_producer = RedditProducer('all')
-    reddit_producer.start_stream()
+    reddit_producer = RedditProducer(top_subreddit_list + countries_subreddit_list)
+    reddit_producer.start_streaming_threads()
