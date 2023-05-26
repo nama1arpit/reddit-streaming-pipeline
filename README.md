@@ -95,7 +95,9 @@ http://192.168.49.2:30000
 # Improvements
 - Cassandra and Kafka initialisation: The initialisation containers stay running after the initialisation is finished due to restart policy of other containers within the same pod. A separate deployment for intitialisation containers was considered but due to the lack of option `restart_policy=Never` in `kubernetes_deployment` terraform resource ([github issue](https://github.com/hashicorp/terraform-provider-kubernetes/issues/435)). Furthermore, [kubernetes_job](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/job) resource can be considered for this purpose.
 
-- Optimise Dockerfiles: Certain dockerfiles can be further optimised to build only the final few layers in the case of relevant script modification. This should reduce the running time of the CI script. On that note, a proper CI pipeline is also another improvement to work on.
+- Optimise Dockerfiles: Certain dockerfiles can be further optimised to build only the final few layers in the case of relevant script modification. This should reduce the running time of the CI script.
+
+- CI pipeline: Currently, a script `docker_image_publish.sh` is being used to build and push various docker images to docker hub. However, a better and automated CI pipeline can be implemented based on Github Actions.
 
 - Different Cassandra Users: A separate read-only user in Cassandra should be made for Grafana dashboard queries.
 
