@@ -2,6 +2,8 @@
 ## Project Overview
 The Reddit Sentiment Analysis Data Pipeline is designed to collect comments from Reddit using the Reddit API, process them using Apache Spark, store the processed data in Cassandra, and visualize sentiment scores of various subreddits in Grafana. The pipeline leverages containerization and utilizes a Kubernetes cluster for deployment, with infrastructure management handled by Terraform. Finally, Kafka is used as a message broker to provide low latency, scalability & availability.
 
+**NOTE: This project was (fortunately?) created right before the [Reddit API terms and policies](https://www.reddit.com/r/reddit/comments/12qwagm/an_update_regarding_reddits_api/) changed drastically making it a paid service as of now. So, just a heads up, I haven't tested the pipeline with a paid account yet and it may not work as expected. Feel free to make a PR if you happen to find any required changes.**
+
 # Table of Contents
 - [Project Overview](#project-overview)
 - [Table of Contents](#table-of-contents)
